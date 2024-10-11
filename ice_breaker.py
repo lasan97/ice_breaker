@@ -4,12 +4,12 @@ from langchain_openai import ChatOpenAI
 from langchain.chains import LLMChain
 import os
 
+from agents.linkedin_lookup_agent import lookup as linkedin_lookup_agent
 from third_parties.linkedin import scrape_linkedin_profile
 
-if __name__ == "__main__":
-    load_dotenv()
-
-    print("Hello Langchain!")
+def ice_break_with(name: str) -> str:
+    linkedin_username = linkedin_lookup_agent(name=name)
+    linkedin_data = scrape_linkedin_profile(linkedin_profile_url=linkedin_username, mock=True)
 
     summery_template = """
     생성하려는 사람에 대한 링크드인 정보 {information}가 주어집니다.
@@ -23,9 +23,13 @@ if __name__ == "__main__":
 
     chain = LLMChain(llm=llm, prompt=summery_prompt_template)
 
-    linkedin_data = scrape_linkedin_profile("", mock=True)
-
     res = chain.invoke(input={"information": linkedin_data})
 
     print(res)
-    print(res['text'])
+
+
+if __name__ == "__main__":
+    load_dotenv()
+
+    print("Ice Breaker Enter")
+    ice_break_with(name="Eden Marco Udemy")
